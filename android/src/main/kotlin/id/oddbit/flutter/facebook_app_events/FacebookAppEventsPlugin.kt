@@ -8,7 +8,6 @@ import com.facebook.FacebookSdk
 import com.facebook.appevents.AppEventsLogger
 import com.facebook.GraphRequest
 import com.facebook.GraphResponse
-import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
@@ -17,26 +16,18 @@ import io.flutter.plugin.common.PluginRegistry.Registrar
 import java.util.Currency
 
 /** FacebookAppEventsPlugin */
-class FacebookAppEventsPlugin: FlutterPlugin, MethodCallHandler {
-  /// The MethodChannel that will the communication between Flutter and native Android
-  ///
-  /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-  /// when the Flutter Engine is detached from the Activity
-  private lateinit var channel : MethodChannel
+class FacebookAppEventsPlugin(registrar: Registrar) : MethodCallHandler {
   private lateinit var appEventsLogger: AppEventsLogger
   private lateinit var anonymousId: String
 
   private val logTag = "FacebookAppEvents"
 
-  override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-    channel = MethodChannel(flutterPluginBinding.binaryMessenger, "flutter.oddbit.id/facebook_app_events")
-    channel.setMethodCallHandler(this)
-    appEventsLogger = AppEventsLogger.newLogger(flutterPluginBinding.applicationContext)
-    anonymousId = AppEventsLogger.getAnonymousAppDeviceGUID(flutterPluginBinding.applicationContext)
-  }
-
-  override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
-    channel.setMethodCallHandler(null)
+  companion object {
+    @JvmStatic
+    fun registerWith(registrar: Registrar) {
+      val channel = MethodChannel(registrar.messenger(), "flutter.oddbit.id/facebook_app_events")
+      channel.setMethodCallHandler(FacebookAppEventsPlugin(registrar))
+    }
   }
 
   override fun onMethodCall(call: MethodCall, result: Result) {
