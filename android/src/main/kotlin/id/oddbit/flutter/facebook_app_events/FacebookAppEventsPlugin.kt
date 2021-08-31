@@ -18,13 +18,11 @@ import java.util.Currency
 /** FacebookAppEventsPlugin */
 class FacebookAppEventsPlugin(registrar: Registrar) : MethodCallHandler {
   private lateinit var appEventsLogger: AppEventsLogger
-  private lateinit var anonymousId: String
 
   private val logTag = "FacebookAppEvents"
 
   init {
     this.appEventsLogger = AppEventsLogger.newLogger(registrar.context())
-    this.anonymousId = AppEventsLogger.getAnonymousAppDeviceGUID(flutterPluginBinding.applicationContext)
   }
 
   companion object {
@@ -48,7 +46,6 @@ class FacebookAppEventsPlugin(registrar: Registrar) : MethodCallHandler {
       "updateUserProperties" -> handleUpdateUserProperties(call, result)
       "setAutoLogAppEventsEnabled" -> handleSetAutoLogAppEventsEnabled(call, result)
       "setDataProcessingOptions" -> handleSetDataProcessingOptions(call, result)
-      "getAnonymousId" -> handleGetAnonymousId(call, result)
       "logPurchase" -> handlePurchased(call, result)
       "setAdvertiserTracking" -> handleSetAdvertiserTracking(call, result)
 
@@ -74,9 +71,7 @@ class FacebookAppEventsPlugin(registrar: Registrar) : MethodCallHandler {
   private fun handleGetApplicationId(call: MethodCall, result: Result) {
     result.success(appEventsLogger.applicationId)
   }
- private fun handleGetAnonymousId(call: MethodCall, result: Result) {
-    result.success(anonymousId)
-  }
+  
   //not an android implementation as of yet
   private fun handleSetAdvertiserTracking(call: MethodCall, result: Result) {
     result.success(null);
