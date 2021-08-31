@@ -22,6 +22,11 @@ class FacebookAppEventsPlugin(registrar: Registrar) : MethodCallHandler {
 
   private val logTag = "FacebookAppEvents"
 
+  init {
+    this.appEventsLogger = AppEventsLogger.newLogger(registrar.context())
+    this.anonymousId = AppEventsLogger.getAnonymousAppDeviceGUID(flutterPluginBinding.applicationContext)
+  }
+
   companion object {
     @JvmStatic
     fun registerWith(registrar: Registrar) {
